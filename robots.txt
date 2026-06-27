@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bobo-dev-18.github.io/sitemap.xml
