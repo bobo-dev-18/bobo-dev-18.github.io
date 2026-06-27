@@ -329,8 +329,13 @@
       }
 
       .couple-portrait {
-        margin: 26px 0 0;
+        display: grid;
+        width: min(100%, 320px);
+        aspect-ratio: 1 / 1;
+        margin: 22px auto 0;
         padding: 10px;
+        place-items: center;
+        overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.74);
         border-radius: 28px;
         background: rgba(255, 255, 255, 0.84);
@@ -340,8 +345,40 @@
       .couple-portrait img {
         display: block;
         width: 100%;
+        height: 100%;
         border-radius: 22px;
-        object-fit: cover;
+        object-fit: contain;
+      }
+
+      .story-visual {
+        width: min(100%, 340px);
+        margin: 22px auto 0;
+        padding: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.74);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 18px 46px rgba(217, 22, 84, 0.14);
+      }
+
+      .story-visual img {
+        display: block;
+        width: 100%;
+        max-height: min(52vh, 420px);
+        max-height: min(52svh, 420px);
+        aspect-ratio: 4 / 5;
+        border-radius: 22px;
+        background: #fff8ed;
+        object-fit: contain;
+      }
+
+      .story-visual figcaption {
+        padding: 11px 8px 2px;
+        color: var(--ink-soft);
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 19px;
+        text-align: center;
       }
 
       .hero-card {
@@ -646,10 +683,12 @@
 
       .proposal-modal {
         position: relative;
-        width: min(100%, 368px);
-        min-height: 430px;
-        padding: 22px;
-        overflow: hidden;
+        width: min(calc(100vw - 28px), 368px);
+        max-height: calc(100vh - 32px);
+        max-height: calc(100svh - 32px);
+        padding: 18px;
+        overflow: auto;
+        overscroll-behavior: contain;
         border: 1px solid rgba(255, 255, 255, 0.68);
         border-radius: 32px;
         background:
@@ -692,15 +731,19 @@
 
       .proposal-art {
         display: block;
-        width: min(100%, 250px);
+        width: min(68vw, 230px);
+        max-height: min(30vh, 230px);
+        max-height: min(30svh, 230px);
+        aspect-ratio: 1 / 1;
         margin: 0 auto 16px;
         border-radius: 24px;
+        object-fit: contain;
         box-shadow: 0 16px 40px rgba(217, 22, 84, 0.18);
       }
 
       .proposal-modal h2 {
         color: var(--ink);
-        font-size: 30px;
+        font-size: clamp(25px, 7vw, 30px);
         line-height: 1.12;
         text-align: center;
       }
@@ -713,6 +756,34 @@
         font-weight: 700;
         line-height: 24px;
         text-align: center;
+      }
+
+      @media (max-height: 700px) {
+        .proposal-modal {
+          padding: 14px;
+          border-radius: 26px;
+        }
+
+        .modal-window-dots {
+          margin-bottom: 12px;
+        }
+
+        .proposal-art {
+          width: min(58vw, 190px);
+          max-height: min(26vh, 190px);
+          max-height: min(26svh, 190px);
+          margin-bottom: 12px;
+        }
+
+        .proposal-modal p {
+          font-size: 14px;
+          line-height: 21px;
+        }
+
+        .modal-actions {
+          min-height: 98px;
+          margin-top: 18px;
+        }
       }
 
       .modal-actions {
@@ -739,7 +810,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 2;
+        z-index: 70;
         width: min(42vw, 150px);
         border: 1px solid var(--line);
         background: white;
@@ -791,6 +862,7 @@
         bottom: 16px;
         left: 16px;
         z-index: 50;
+        pointer-events: none;
         max-width: 390px;
         margin: 0 auto;
         padding: 14px 16px;
@@ -813,6 +885,16 @@
         opacity: 1;
         transform: translateY(0);
         visibility: visible;
+      }
+
+      .modal-backdrop.is-open ~ .toast {
+        top: max(12px, env(safe-area-inset-top));
+        bottom: auto;
+        transform: translateY(-120%);
+      }
+
+      .modal-backdrop.is-open ~ .toast.is-visible {
+        transform: translateY(0);
       }
 
       .float-heart {
@@ -943,6 +1025,17 @@
                 <p>波波坦白年齡差那天，其實很怕妳會退開。可是妳只是笑著說「13 歲欸，哥哥」，還說年紀大一點比較有安全感。那句「你要說到做到欸」，我一直記在心裡。</p>
               </article>
             </div>
+            <figure class="story-visual">
+              <img
+                src="assets/story-video-call.webp"
+                alt="涵涵與波波在電腦前遠端視訊聊天，紅線把兩個螢幕連在一起"
+                width="900"
+                height="1407"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>第一天，我們在電腦前隔著螢幕聊天，紅線卻像已經悄悄接上。</figcaption>
+            </figure>
           </section>
 
           <section class="scene" data-scene="2">
@@ -956,6 +1049,17 @@
               <strong>波波的小心意</strong>
               <p>有時候是一句早安，有時候是一朵花，有時候是記得妳喜歡草莓、熱可可，還有那些妳以為我可能會忘記的小細節。</p>
             </div>
+            <figure class="story-visual">
+              <img
+                src="assets/story-daily-flowers.webp"
+                alt="波波每天送上一朵花和訊息，涵涵在螢幕另一邊收到心意"
+                width="900"
+                height="1125"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>一天一束花，一句留言，是波波想慢慢靠近妳的方式。</figcaption>
+            </figure>
           </section>
 
           <section class="scene" data-scene="3">
@@ -1030,6 +1134,17 @@
           <section class="scene" data-scene="5">
             <p class="kicker">紅線與未來</p>
             <h2>月老廟、紅線、一起許願，波波都放在心上。</h2>
+            <figure class="story-visual">
+              <img
+                src="assets/story-yuelao-red-thread.webp"
+                alt="涵涵與波波在月老廟前一起許願，手上的紅線連在一起"
+                width="900"
+                height="1407"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>想和妳一起去月老廟，把我們的紅線好好繫緊。</figcaption>
+            </figure>
             <div class="promise-list">
               <div class="promise-item">
                 <b>紅</b>
@@ -1041,8 +1156,8 @@
               <div class="promise-item">
                 <b>牽</b>
                 <div>
-                  <strong>想牽手陪伴</strong>
-                  <span>妳說也幻想過手牽手逛街。那句話很甜，甜到波波一直記到現在。</span>
+                  <strong>想牽妳的手</strong>
+                  <span>我一直想牽著妳的手，陪妳慢慢走，走過街角、走過日常，也走進我們以後的每一天。</span>
                 </div>
               </div>
               <div class="promise-item">
@@ -1062,6 +1177,17 @@
               <p>
                 100 天不是結束。它只是波波把妳放進心裡之後，第一段好好愛妳的證明。
               </p>
+              <figure class="story-visual final-visual">
+                <img
+                  src="assets/story-holding-hands.webp"
+                  alt="涵涵與波波牽著手走在暖色街道上，地上有紅線和花瓣"
+                  width="900"
+                  height="1407"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>我一直想牽著妳的手，陪妳走進以後每一天。</figcaption>
+              </figure>
               <div class="final-counter">
                 <div class="love-counter">
                   <div>
@@ -1471,7 +1597,6 @@
         disagreeButton.textContent = disagreeAttempts >= 4 ? "還是同意吧" : "不同意";
         attemptCopy.textContent =
           disagreeAttempts >= 5 ? "波波已經把出口藏起來了。" : `第 ${disagreeAttempts} 次逃跑成功。`;
-        showToast("不同意按鈕瞬移了");
         if (hasPointer) popHeart(event.clientX, event.clientY);
       }
 
@@ -1521,7 +1646,6 @@
             closeProposal();
             return;
           }
-          showToast("先別關，波波還沒問完");
           heartBurst(0.45);
         }
       });
