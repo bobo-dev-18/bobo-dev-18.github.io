@@ -779,7 +779,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 2;
+        z-index: 70;
         width: min(42vw, 150px);
         border: 1px solid var(--line);
         background: white;
@@ -831,6 +831,7 @@
         bottom: 16px;
         left: 16px;
         z-index: 50;
+        pointer-events: none;
         max-width: 390px;
         margin: 0 auto;
         padding: 14px 16px;
@@ -853,6 +854,16 @@
         opacity: 1;
         transform: translateY(0);
         visibility: visible;
+      }
+
+      .modal-backdrop.is-open ~ .toast {
+        top: max(12px, env(safe-area-inset-top));
+        bottom: auto;
+        transform: translateY(-120%);
+      }
+
+      .modal-backdrop.is-open ~ .toast.is-visible {
+        transform: translateY(0);
       }
 
       .float-heart {
@@ -1511,7 +1522,6 @@
         disagreeButton.textContent = disagreeAttempts >= 4 ? "還是同意吧" : "不同意";
         attemptCopy.textContent =
           disagreeAttempts >= 5 ? "波波已經把出口藏起來了。" : `第 ${disagreeAttempts} 次逃跑成功。`;
-        showToast("不同意按鈕瞬移了");
         if (hasPointer) popHeart(event.clientX, event.clientY);
       }
 
@@ -1561,7 +1571,6 @@
             closeProposal();
             return;
           }
-          showToast("先別關，波波還沒問完");
           heartBurst(0.45);
         }
       });
