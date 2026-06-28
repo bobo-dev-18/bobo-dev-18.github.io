@@ -192,9 +192,9 @@
         --heart-y: -999px;
         --heart-spin: 0deg;
         --heart-scale: 1;
-        --leaf-sway: 2deg;
-        --leaf-drift: 1px;
-        --leaf-lift: 1px;
+        --leaf-sway: 3deg;
+        --leaf-drift: 1.6px;
+        --leaf-lift: 1.4px;
         --leaf-duration: 4.8s;
         --leaf-delay: 0s;
         animation: leafSway var(--leaf-duration) ease-in-out var(--leaf-delay) infinite alternate;
@@ -1308,9 +1308,11 @@
       let heartBurst = () => {};
       const domHearts = [];
       const domPointer = { active: false, visible: false, x: -999, y: -999, dx: 0, dy: 0, lastX: -999, lastY: -999 };
+      const domRipples = [];
       let domHeartFrame = null;
       let resizeFrame = null;
       let domHeartActiveUntil = 0;
+      let lastRippleAt = 0;
 
       function createDomHeartField() {
         const symbols = ["♥", "❤", "♡"];
@@ -1340,11 +1342,11 @@
           piece.textContent = symbols[i % symbols.length];
           piece.style.color = colors[i % colors.length];
           piece.style.fontSize = `${isRim ? 18 + Math.random() * 7 : 13 + Math.random() * 8}px`;
-          piece.style.setProperty("--leaf-sway", `${1.2 + Math.random() * 2.4}deg`);
-          piece.style.setProperty("--leaf-drift", `${0.6 + Math.random() * 1.8}px`);
-          piece.style.setProperty("--leaf-lift", `${0.4 + Math.random() * 1.4}px`);
-          piece.style.setProperty("--leaf-duration", `${3.6 + Math.random() * 2.8}s`);
-          piece.style.setProperty("--leaf-delay", `${Math.random() * -5}s`);
+          piece.style.setProperty("--leaf-sway", `${1.8 + Math.random() * 3.1}deg`);
+          piece.style.setProperty("--leaf-drift", `${1 + Math.random() * 2.4}px`);
+          piece.style.setProperty("--leaf-lift", `${0.8 + Math.random() * 2}px`);
+          piece.style.setProperty("--leaf-duration", `${3.4 + Math.random() * 3.2}s`);
+          piece.style.setProperty("--leaf-delay", `${Math.random() * -6}s`);
           fragment.appendChild(piece);
           domHearts.push({
             el: piece,
@@ -1435,18 +1437,44 @@
         });
       }
 
+      function pushHeartRipple(x, y, strength = 1) {
+        const now = performance.now();
+        domRipples.push({ x, y, born: now, strength });
+        if (domRipples.length > 8) domRipples.shift();
+        domHeartActiveUntil = Math.max(domHeartActiveUntil, now + 1100);
+        scheduleDomHeartAnimation();
+      }
+
       function animateDomHearts() {
         domHeartFrame = null;
+        const now = performance.now();
+        while (domRipples.length && now - domRipples[0].born > 1250) domRipples.shift();
         let maxEnergy = 0;
         for (const heart of domHearts) {
           const dx = heart.x - domPointer.x;
           const dy = heart.y - domPointer.y;
           const distance = Math.hypot(dx, dy);
-          if (domPointer.visible && distance < 88) {
+          if (domPointer.active && domPointer.visible && distance < 82) {
             const influence = Math.pow(1 - distance / 88, 2);
             const safeDistance = Math.max(distance, 1);
-            heart.vx += (dx / safeDistance) * 2.2 * influence + domPointer.dx * 0.2 * influence;
-            heart.vy += (dy / safeDistance) * 1.8 * influence + domPointer.dy * 0.2 * influence;
+            heart.vx += (dx / safeDistance) * 1.2 * influence + domPointer.dx * 0.08 * influence;
+            heart.vy += (dy / safeDistance) * 1 * influence + domPointer.dy * 0.08 * influence;
+          }
+          for (const ripple of domRipples) {
+            const rippleAge = now - ripple.born;
+            const rippleRadius = rippleAge * 0.36;
+            const rx = heart.x - ripple.x;
+            const ry = heart.y - ripple.y;
+            const rippleDistance = Math.hypot(rx, ry);
+            const band = 46;
+            const decay = Math.max(0, 1 - rippleAge / 1150);
+            const wave = Math.exp(-((rippleDistance - rippleRadius) ** 2) / (2 * band * band)) * decay * ripple.strength;
+            if (wave > 0.004) {
+              const safeRippleDistance = Math.max(rippleDistance, 1);
+              heart.vx += (rx / safeRippleDistance) * wave * 1.15;
+              heart.vy += (ry / safeRippleDistance) * wave * 0.95;
+              heart.spin += wave * (heart.isRim ? 0.95 : 0.55);
+            }
           }
           heart.vx += (heart.tx - heart.x) * 0.045;
           heart.vy += (heart.ty - heart.y) * 0.045;
@@ -1475,11 +1503,18 @@
         domPointer.active = true;
         domHeartActiveUntil = performance.now() + 700;
         updateDomPointer(event);
+        pushHeartRipple(event.clientX, event.clientY, 1);
         scheduleDomHeartAnimation();
       });
       window.addEventListener("pointermove", (event) => {
         updateDomPointer(event);
-        domHeartActiveUntil = performance.now() + (event.pointerType === "mouse" ? 520 : 760);
+        const now = performance.now();
+        const speed = Math.hypot(domPointer.dx, domPointer.dy);
+        if (speed > 2.5 && now - lastRippleAt > 72) {
+          lastRippleAt = now;
+          pushHeartRipple(event.clientX, event.clientY, Math.min(1.45, 0.62 + speed / 32));
+        }
+        domHeartActiveUntil = now + (event.pointerType === "mouse" ? 780 : 980);
         scheduleDomHeartAnimation();
       });
       window.addEventListener("pointerup", () => {
