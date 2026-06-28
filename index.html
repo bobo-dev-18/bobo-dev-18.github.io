@@ -755,6 +755,16 @@
         text-align: center;
       }
 
+      .proposal-modal h2 .title-line,
+      .proposal-modal p .copy-line {
+        display: block;
+      }
+
+      .proposal-modal.is-accepted h2 {
+        font-size: clamp(30px, 8vw, 36px);
+        line-height: 1.15;
+      }
+
       .proposal-modal p {
         margin: 12px auto 0;
         max-width: 280px;
@@ -763,6 +773,10 @@
         font-weight: 700;
         line-height: 24px;
         text-align: center;
+      }
+
+      .proposal-modal.is-accepted p {
+        max-width: 310px;
       }
 
       @media (max-height: 700px) {
@@ -1624,8 +1638,8 @@
         event.stopPropagation();
         proposalModal.classList.add("is-accepted");
         disagreeButton.classList.add("is-hidden");
-        $("#proposalTitle").textContent = "太開心了，妳終於同意了。";
-        $("#proposalCopy").textContent = "我一定用一輩子來愛妳、保護妳，好好疼妳的。";
+        $("#proposalTitle").innerHTML = '<span class="title-line">太開心了</span><span class="title-line">妳終於同意了</span>';
+        $("#proposalCopy").innerHTML = '<span class="copy-line">我一定用一輩子來愛妳、保護妳，</span><span class="copy-line">好好疼妳的。</span>';
         attemptCopy.textContent = "同意成功，撒花。";
         showToast("100 天不是結束，是繼續疼妳的開始");
         heartBurst(1.8);
