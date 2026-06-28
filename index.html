@@ -1309,8 +1309,9 @@
       const recentDisagreePositions = [];
       let heartBurst = () => {};
       const domHearts = [];
-      const domPointer = { active: false, visible: false, x: -999, y: -999, dx: 0, dy: 0, lastX: -999, lastY: -999 };
+      const domPointer = { active: false, visible: false, x: -999, y: -999, dx: 0, dy: 0, prevX: -999, prevY: -999, lastX: -999, lastY: -999 };
       const domRipples = [];
+      const domWakes = [];
       let domHeartFrame = null;
       let resizeFrame = null;
       let domHeartActiveUntil = 0;
@@ -1345,16 +1346,16 @@
           piece.style.color = colors[i % colors.length];
           piece.style.fontSize = `${isRim ? 18 + Math.random() * 7 : 13 + Math.random() * 8}px`;
           const swayAngle = Math.random() * Math.PI * 2;
-          const swayDistance = 0.55 + Math.random() * 1.85;
+          const swayDistance = 1.45 + Math.random() * 3.1;
           const swayX = Math.cos(swayAngle) * swayDistance;
           const swayY = Math.sin(swayAngle) * swayDistance;
           const spinDirection = Math.random() > 0.5 ? 1 : -1;
-          piece.style.setProperty("--leaf-sway", `${spinDirection * (0.8 + Math.random() * 2.2)}deg`);
+          piece.style.setProperty("--leaf-sway", `${spinDirection * (1.4 + Math.random() * 3.4)}deg`);
           piece.style.setProperty("--leaf-x-a", `${-swayX}px`);
           piece.style.setProperty("--leaf-y-a", `${-swayY}px`);
           piece.style.setProperty("--leaf-x-b", `${swayX}px`);
           piece.style.setProperty("--leaf-y-b", `${swayY}px`);
-          piece.style.setProperty("--leaf-duration", `${3.8 + Math.random() * 3.8}s`);
+          piece.style.setProperty("--leaf-duration", `${3.2 + Math.random() * 4.2}s`);
           piece.style.setProperty("--leaf-delay", `${Math.random() * -6}s`);
           fragment.appendChild(piece);
           domHearts.push({
@@ -1415,6 +1416,8 @@
           domPointer.lastY = nextY;
           domPointer.visible = true;
         }
+        domPointer.prevX = domPointer.lastX;
+        domPointer.prevY = domPointer.lastY;
         domPointer.dx = nextX - domPointer.lastX;
         domPointer.dy = nextY - domPointer.lastY;
         domPointer.x = nextX;
@@ -1454,10 +1457,21 @@
         scheduleDomHeartAnimation();
       }
 
+      function pushHeartWake(x1, y1, x2, y2, strength = 1) {
+        const length = Math.hypot(x2 - x1, y2 - y1);
+        if (length < 5) return;
+        const now = performance.now();
+        domWakes.push({ x1, y1, x2, y2, length, born: now, strength });
+        if (domWakes.length > 7) domWakes.shift();
+        domHeartActiveUntil = Math.max(domHeartActiveUntil, now + 620);
+        scheduleDomHeartAnimation();
+      }
+
       function animateDomHearts() {
         domHeartFrame = null;
         const now = performance.now();
         while (domRipples.length && now - domRipples[0].born > 820) domRipples.shift();
+        while (domWakes.length && now - domWakes[0].born > 620) domWakes.shift();
         let maxEnergy = 0;
         for (const heart of domHearts) {
           const dx = heart.x - domPointer.x;
@@ -1483,6 +1497,31 @@
               heart.vx += (rx / safeRippleDistance) * wave * 0.42;
               heart.vy += (ry / safeRippleDistance) * wave * 0.34;
               heart.spin += wave * (heart.isRim ? 0.36 : 0.22);
+            }
+          }
+          for (const wake of domWakes) {
+            const age = now - wake.born;
+            const ux = (wake.x2 - wake.x1) / wake.length;
+            const uy = (wake.y2 - wake.y1) / wake.length;
+            const hx = heart.x - wake.x1;
+            const hy = heart.y - wake.y1;
+            const projection = Math.max(0, Math.min(wake.length, hx * ux + hy * uy));
+            const closestX = wake.x1 + ux * projection;
+            const closestY = wake.y1 + uy * projection;
+            const sideX = heart.x - closestX;
+            const sideY = heart.y - closestY;
+            const sideDistance = Math.hypot(sideX, sideY);
+            const band = 34;
+            const ageDecay = Math.max(0, 1 - age / 560);
+            const pathInfluence = Math.exp(-(sideDistance * sideDistance) / (2 * band * band)) * ageDecay * wake.strength;
+            if (pathInfluence > 0.006) {
+              const sideSign = Math.sign(ux * sideY - uy * sideX) || 1;
+              const normalX = -uy * sideSign;
+              const normalY = ux * sideSign;
+              const centerFade = Math.min(1, sideDistance / band + 0.18);
+              heart.vx += normalX * pathInfluence * 0.56 * centerFade;
+              heart.vy += normalY * pathInfluence * 0.46 * centerFade;
+              heart.spin += sideSign * pathInfluence * 0.18;
             }
           }
           heart.vx += (heart.tx - heart.x) * 0.045;
@@ -1512,16 +1551,16 @@
         domPointer.active = true;
         domHeartActiveUntil = performance.now() + 700;
         updateDomPointer(event);
-        pushHeartRipple(event.clientX, event.clientY, 1);
+        pushHeartRipple(event.clientX, event.clientY, 0.55);
         scheduleDomHeartAnimation();
       });
       window.addEventListener("pointermove", (event) => {
         updateDomPointer(event);
         const now = performance.now();
         const speed = Math.hypot(domPointer.dx, domPointer.dy);
-        if (speed > 3.5 && now - lastRippleAt > 110) {
+        if (speed > 2.5 && now - lastRippleAt > 42) {
           lastRippleAt = now;
-          pushHeartRipple(event.clientX, event.clientY, Math.min(0.72, 0.3 + speed / 70));
+          pushHeartWake(domPointer.prevX, domPointer.prevY, event.clientX, event.clientY, Math.min(0.54, 0.2 + speed / 82));
         }
         domHeartActiveUntil = now + (event.pointerType === "mouse" ? 560 : 720);
         scheduleDomHeartAnimation();
