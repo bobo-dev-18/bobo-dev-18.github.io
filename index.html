@@ -188,7 +188,17 @@
         font-size: 18px;
         opacity: 0.86;
         text-shadow: 0 6px 12px rgba(217, 22, 84, 0.16);
-        transform: translate3d(-999px, -999px, 0);
+        --heart-x: -999px;
+        --heart-y: -999px;
+        --heart-spin: 0deg;
+        --heart-scale: 1;
+        --leaf-sway: 2deg;
+        --leaf-drift: 1px;
+        --leaf-lift: 1px;
+        --leaf-duration: 4.8s;
+        --leaf-delay: 0s;
+        animation: leafSway var(--leaf-duration) ease-in-out var(--leaf-delay) infinite alternate;
+        transform: translate3d(var(--heart-x), var(--heart-y), 0) rotate(var(--heart-spin)) scale(var(--heart-scale));
       }
 
       .heart-piece.is-rim {
@@ -198,6 +208,28 @@
 
       .heart-field.is-animating .heart-piece {
         will-change: transform;
+      }
+
+      @keyframes leafSway {
+        from {
+          transform: translate3d(
+              calc(var(--heart-x) - var(--leaf-drift)),
+              calc(var(--heart-y) + var(--leaf-lift)),
+              0
+            )
+            rotate(calc(var(--heart-spin) - var(--leaf-sway)))
+            scale(var(--heart-scale));
+        }
+
+        to {
+          transform: translate3d(
+              calc(var(--heart-x) + var(--leaf-drift)),
+              calc(var(--heart-y) - var(--leaf-lift)),
+              0
+            )
+            rotate(calc(var(--heart-spin) + var(--leaf-sway)))
+            scale(var(--heart-scale));
+        }
       }
 
       .fallback-scene {
@@ -1308,6 +1340,11 @@
           piece.textContent = symbols[i % symbols.length];
           piece.style.color = colors[i % colors.length];
           piece.style.fontSize = `${isRim ? 18 + Math.random() * 7 : 13 + Math.random() * 8}px`;
+          piece.style.setProperty("--leaf-sway", `${1.2 + Math.random() * 2.4}deg`);
+          piece.style.setProperty("--leaf-drift", `${0.6 + Math.random() * 1.8}px`);
+          piece.style.setProperty("--leaf-lift", `${0.4 + Math.random() * 1.4}px`);
+          piece.style.setProperty("--leaf-duration", `${3.6 + Math.random() * 2.8}s`);
+          piece.style.setProperty("--leaf-delay", `${Math.random() * -5}s`);
           fragment.appendChild(piece);
           domHearts.push({
             el: piece,
@@ -1377,7 +1414,10 @@
 
       function renderDomHearts() {
         for (const heart of domHearts) {
-          heart.el.style.transform = `translate3d(${heart.x}px, ${heart.y}px, 0) rotate(${heart.spin}deg) scale(${heart.scale})`;
+          heart.el.style.setProperty("--heart-x", `${heart.x}px`);
+          heart.el.style.setProperty("--heart-y", `${heart.y}px`);
+          heart.el.style.setProperty("--heart-spin", `${heart.spin}deg`);
+          heart.el.style.setProperty("--heart-scale", heart.scale);
         }
       }
 
@@ -1399,22 +1439,25 @@
         domHeartFrame = null;
         let maxEnergy = 0;
         for (const heart of domHearts) {
-          const dx = domPointer.x - heart.x;
-          const dy = domPointer.y - heart.y;
+          const dx = heart.x - domPointer.x;
+          const dy = heart.y - domPointer.y;
           const distance = Math.hypot(dx, dy);
-          if (domPointer.active && domPointer.visible && distance < 96) {
-            const influence = Math.pow(1 - distance / 96, 2);
-            heart.vx += dx * 0.014 * influence + domPointer.dx * 0.16 * influence;
-            heart.vy += dy * 0.014 * influence + domPointer.dy * 0.16 * influence;
+          if (domPointer.visible && distance < 88) {
+            const influence = Math.pow(1 - distance / 88, 2);
+            const safeDistance = Math.max(distance, 1);
+            heart.vx += (dx / safeDistance) * 2.2 * influence + domPointer.dx * 0.2 * influence;
+            heart.vy += (dy / safeDistance) * 1.8 * influence + domPointer.dy * 0.2 * influence;
           }
           heart.vx += (heart.tx - heart.x) * 0.045;
           heart.vy += (heart.ty - heart.y) * 0.045;
-          heart.vx *= domPointer.active ? 0.88 : 0.82;
-          heart.vy *= domPointer.active ? 0.88 : 0.82;
+          heart.vx *= domPointer.active ? 0.9 : 0.84;
+          heart.vy *= domPointer.active ? 0.9 : 0.84;
           heart.x += heart.vx;
           heart.y += heart.vy;
           heart.spin += heart.vx * 0.12;
-          heart.el.style.transform = `translate3d(${heart.x}px, ${heart.y}px, 0) rotate(${heart.spin}deg) scale(${heart.scale})`;
+          heart.el.style.setProperty("--heart-x", `${heart.x}px`);
+          heart.el.style.setProperty("--heart-y", `${heart.y}px`);
+          heart.el.style.setProperty("--heart-spin", `${heart.spin}deg`);
           maxEnergy = Math.max(maxEnergy, Math.abs(heart.vx) + Math.abs(heart.vy) + Math.abs(heart.tx - heart.x) * 0.02 + Math.abs(heart.ty - heart.y) * 0.02);
         }
         domPointer.dx *= 0.7;
@@ -1435,8 +1478,8 @@
         scheduleDomHeartAnimation();
       });
       window.addEventListener("pointermove", (event) => {
-        if (!domPointer.active) return;
         updateDomPointer(event);
+        domHeartActiveUntil = performance.now() + (event.pointerType === "mouse" ? 520 : 760);
         scheduleDomHeartAnimation();
       });
       window.addEventListener("pointerup", () => {
