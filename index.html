@@ -1051,7 +1051,7 @@
             <p class="kicker">100 天之後，紅線還在</p>
             <h1><span>涵涵 × 波波</span><span>的愛情故事</span></h1>
             <p class="lead">
-              如果有一天妳搜尋「涵涵 波波」，希望妳會找到這裡。從 2025.10.19 那次視訊開始，妳的笑、妳喜歡的草莓、妳說過的小事，都慢慢變成波波每天想靠近妳的理由。
+              如果有一天妳看到這裡，希望妳會知道，這就是「涵涵 波波」的愛情故事。從 2025.10.19 那次視訊開始，妳的笑、妳喜歡的草莓、妳說過的小事，都慢慢變成波波每天想靠近妳的理由。
             </p>
             <figure class="couple-portrait">
               <img
@@ -1072,7 +1072,7 @@
               <article class="story-note">
                 <time datetime="2025-10-19">2025.10.19</time>
                 <h3>第一天認識</h3>
-                <p>第一次視訊，妳把生日、草莓、Bruno Mars、台北和高雄的天氣都聊進來。波波後來才發現，那不是普通聊天，是妳慢慢讓我走進妳的小世界。</p>
+                <p>視訊時，我們什麼都聊。草莓、Bruno Mars、Kitty 展，還有妳陪我聽的那場演講。波波後來才發現，那不是普通聊天，是妳慢慢讓我走進妳的小世界。</p>
               </article>
               <article class="story-note">
                 <time datetime="2025-11-08">2025.11.08</time>
@@ -1097,8 +1097,8 @@
             <p class="kicker">100 天的約定</p>
             <h2>每天一封訊息，一束花，都是想更靠近妳一點。</h2>
             <div class="quote-card">
-              <strong>從 Day 1 到 Day 100</strong>
-              <p>波波的每日鮮花和留言，不只是浪漫而已。是想多認識涵涵一點，想把妳說過的小事收好，也想讓每一天都留下我想妳的證據。</p>
+              <strong>從第一天到第一百天</strong>
+              <p>波波的每日鮮花和留言，不只是浪漫而已。是想多認識涵涵一點，想把妳說過的小事收好，也想讓每一天都留下我想妳的心意。</p>
             </div>
             <div class="quote-card">
               <strong>波波的小心意</strong>
@@ -1163,12 +1163,12 @@
                 <strong>Bruno Mars</strong>
                 <span>妳高中就喜歡的歌</span>
               </button>
-              <button class="memory-chip" type="button" data-memory="Kitty 是妳從小就喜歡的可愛。波波不放圖，但會記得妳看到 Kitty 時那個開心的樣子。">
+              <button class="memory-chip" type="button" data-memory="Kitty 是妳從小就喜歡的。波波記得妳講起它時，眼睛會亮起來的樣子。">
                 <i>♡</i>
                 <strong>Kitty</strong>
                 <span>妳從小喜歡的可愛</span>
               </button>
-              <button class="memory-chip" type="button" data-memory="波波只是把自己學到的理財觀念分享給妳，提醒妳用閒錢慢慢來。不是推薦哪一檔，只是想陪妳把未來一點一點變安心。">
+              <button class="memory-chip" type="button" data-memory="波波把自己學到的理財觀念分享給妳，提醒妳用閒錢慢慢來，也想陪妳把未來一點一點變安心。">
                 <i>↗</i>
                 <strong>小理財</strong>
                 <span>閒錢慢慢來</span>
@@ -1218,7 +1218,7 @@
               <div class="promise-item">
                 <b>家</b>
                 <div>
-                  <strong>約定跟岳母視訊</strong>
+                  <strong>想好好見妳媽媽</strong>
                   <span>妳把媽媽放在很重要的位置，所以波波也想用最認真的樣子，走進妳珍惜的世界。</span>
                 </div>
               </div>
@@ -1728,6 +1728,13 @@
 
       function teleportDisagree(event) {
         disagreeAttempts += 1;
+        const romanticAttempts = [
+          "拜託，真的不考慮同意嗎？我會很疼妳。",
+          "波波還在等妳點頭，想把妳好好放在心上。",
+          "再給我一個機會，我想用一輩子疼妳。",
+          "不同意也沒關係，波波還是會很喜歡妳。",
+          "妳點頭的那一刻，波波一定會超級珍惜。",
+        ];
         const buttonRect = disagreeButton.getBoundingClientRect();
         const hasPointer = typeof event?.clientX === "number" && typeof event?.clientY === "number";
         const pointerX = hasPointer ? event.clientX : buttonRect.left + buttonRect.width / 2;
@@ -1742,8 +1749,7 @@
         disagreeButton.style.top = `${best.y}px`;
         disagreeButton.style.transform = `rotate(${disagreeAttempts % 2 === 0 ? 5 : -5}deg)`;
         disagreeButton.textContent = disagreeAttempts >= 4 ? "還是同意吧" : "不同意";
-        attemptCopy.textContent =
-          disagreeAttempts >= 5 ? "波波已經把出口藏起來了。" : `第 ${disagreeAttempts} 次逃跑成功。`;
+        attemptCopy.textContent = romanticAttempts[(disagreeAttempts - 1) % romanticAttempts.length];
         if (hasPointer) popHeart(event.clientX, event.clientY);
       }
 
@@ -1766,7 +1772,7 @@
         disagreeButton.classList.add("is-hidden");
         $("#proposalTitle").innerHTML = '<span class="title-line">太開心了</span><span class="title-line">妳終於同意了</span>';
         $("#proposalCopy").innerHTML = '<span class="copy-line">我一定用一輩子來愛妳、保護妳，</span><span class="copy-line">好好疼妳的。</span>';
-        attemptCopy.textContent = "同意成功，撒花。";
+        attemptCopy.textContent = "波波開心到想把全世界的花都送給妳。";
         showToast("100 天不是結束，是繼續疼妳的開始");
         heartBurst(1.8);
         confettiShower();
