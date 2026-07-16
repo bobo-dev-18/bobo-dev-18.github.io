@@ -11,7 +11,7 @@
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta name="theme-color" content="#fff9ec" />
     <link rel="canonical" href="https://bobo-dev-18.github.io/" />
-    <link rel="preload" as="image" href="assets/hanhan-bobo-q.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="assets/hanhan-bobo-q-labeled.webp" type="image/webp" fetchpriority="high" />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="涵涵 波波" />
@@ -21,8 +21,8 @@
       content="波波寫給涵涵的 100 日浪漫告白，收藏每天的花、紅線約定與想陪妳走下去的心意。"
     />
     <meta property="og:url" content="https://bobo-dev-18.github.io/" />
-    <meta property="og:image" content="https://bobo-dev-18.github.io/assets/hanhan-bobo-q.png" />
-    <meta property="og:image:secure_url" content="https://bobo-dev-18.github.io/assets/hanhan-bobo-q.png" />
+    <meta property="og:image" content="https://bobo-dev-18.github.io/assets/hanhan-bobo-q-labeled.png" />
+    <meta property="og:image:secure_url" content="https://bobo-dev-18.github.io/assets/hanhan-bobo-q-labeled.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1254" />
     <meta property="og:image:height" content="1254" />
@@ -33,7 +33,7 @@
       name="twitter:description"
       content="波波寫給涵涵的 100 日浪漫告白，收藏每天的花、紅線約定與想陪妳走下去的心意。"
     />
-    <meta name="twitter:image" content="https://bobo-dev-18.github.io/assets/hanhan-bobo-q.png" />
+    <meta name="twitter:image" content="https://bobo-dev-18.github.io/assets/hanhan-bobo-q-labeled.png" />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23fff9ec'/%3E%3Cpath d='M16 25s-9-5.7-9-12.1C7 9.6 9.4 7 12.5 7c1.7 0 2.9.7 3.5 1.8C16.6 7.7 17.8 7 19.5 7 22.6 7 25 9.6 25 12.9 25 19.3 16 25 16 25Z' fill='%23ff3b6f'/%3E%3C/svg%3E"
@@ -48,10 +48,10 @@
         "inLanguage": "zh-Hant",
         "description": "涵涵與波波的 100 日浪漫告白網頁，寫下波波想給涵涵的愛情故事、紅線約定與每天都想靠近妳的心意。",
         "dateModified": "2026-06-28",
-        "image": "https://bobo-dev-18.github.io/assets/hanhan-bobo-q.png",
+        "image": "https://bobo-dev-18.github.io/assets/hanhan-bobo-q-labeled.png",
         "primaryImageOfPage": {
           "@type": "ImageObject",
-          "url": "https://bobo-dev-18.github.io/assets/hanhan-bobo-q.png",
+          "url": "https://bobo-dev-18.github.io/assets/hanhan-bobo-q-labeled.png",
           "width": 1254,
           "height": 1254
         }
@@ -498,7 +498,8 @@
         box-shadow: 0 16px 38px rgba(217, 22, 84, 0.12);
       }
 
-      .story-note time {
+      .story-note time,
+      .story-note .story-moment {
         display: block;
         margin-bottom: 8px;
         color: var(--rose-deep);
@@ -1300,10 +1301,10 @@
             </p>
             <figure class="couple-portrait">
               <img
-                src="assets/hanhan-bobo-q.webp"
-                alt="涵涵與波波的 Q 版人物，兩人牽著紅線站在一起"
-                width="900"
-                height="900"
+                src="assets/hanhan-bobo-q-labeled.webp"
+                alt="涵涵與波波的 Q 版人物，兩人牽著紅線站在一起，上方有愛心箭頭與名字標籤"
+                width="1254"
+                height="1254"
                 decoding="async"
                 fetchpriority="high"
               />
@@ -1320,7 +1321,7 @@
                 <p>視訊時，我們什麼都聊。草莓、Bruno Mars、Kitty 展，還有妳陪我聽的那場演講。波波後來才發現，那不是普通聊天，是妳慢慢讓我走進妳的小世界。</p>
               </article>
               <article class="story-note">
-                <time datetime="2025-11-08">2025.11.08</time>
+                <span class="story-moment">後來有一天</span>
                 <h3>沒有嫌棄我的年齡</h3>
                 <p>波波坦白年齡差那天，其實很怕妳會退開。可是妳只是笑著說「哇，13 歲欸，哥哥」，還說年紀大一點比較有安全感。妳要的是被照顧、被放在心上的感覺，所以妳提醒我「你要說到做到欸」。這句話我一直記在心裡。</p>
               </article>
@@ -1544,7 +1545,7 @@
         <p id="proposalCopy">100 日小驚喜。波波想把每天的花、每一次想妳、每一個被我記住的小細節，都慢慢變成疼妳的日常。</p>
         <div class="modal-actions" id="modalActions">
           <button class="choice-button agree" id="agreeButton" type="button">同意</button>
-          <div class="attempt-copy" id="attemptCopy">不同意按鈕會跑，直到妳同意為止。</div>
+          <div class="attempt-copy" id="attemptCopy" aria-live="polite"></div>
         </div>
         <button class="choice-button modal-close" id="closeProposalButton" type="button">關閉視窗</button>
       </section>
@@ -1943,7 +1944,7 @@
         disagreeButton.classList.remove("is-hidden");
         disagreeButton.style.transform = "rotate(0deg)";
         disagreeButton.textContent = "不同意";
-        attemptCopy.textContent = "不同意按鈕會跑，直到妳同意為止。";
+        attemptCopy.textContent = "";
         requestAnimationFrame(placeDisagreeBesideAgree);
         window.setTimeout(() => agreeButton.focus(), 120);
       }
