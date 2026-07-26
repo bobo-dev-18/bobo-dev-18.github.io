@@ -1535,13 +1535,16 @@
       >
         <div class="modal-window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
         <img
+          id="proposalArt"
           class="proposal-art"
-          src="assets/hanhan-bobo-wedding-q-soft3d-v4.webp"
-          alt="涵涵與波波的軟萌 3D Q 版禮服照"
+          src="assets/hanhan-bobo-proposal-kneeling-soft3d-v4.webp"
+          alt="軟萌 3D Q 版的波波單膝下跪，拿著戒指盒向涵涵求婚"
           width="1254"
           height="1254"
           loading="lazy"
           decoding="async"
+          data-proposal-src="assets/hanhan-bobo-proposal-kneeling-soft3d-v4.webp"
+          data-accepted-src="assets/hanhan-bobo-wedding-q-soft3d-v4.webp"
         />
         <h2 id="proposalTitle">你願意嫁給我嗎？</h2>
         <p id="proposalCopy">100 日小驚喜。波波想把每天的花、每一次想妳、每一個被我記住的小細節，都慢慢變成疼妳的日常。</p>
@@ -1563,6 +1566,7 @@
       const phone = $("#phone");
       const backdrop = $("#proposalBackdrop");
       const proposalModal = $(".proposal-modal");
+      const proposalArt = $("#proposalArt");
       const agreeButton = $("#agreeButton");
       const disagreeButton = $("#disagreeButton");
       const closeProposalButton = $("#closeProposalButton");
@@ -1943,6 +1947,9 @@
         recentDisagreePositions.length = 0;
         $("#proposalTitle").textContent = "你願意嫁給我嗎？";
         $("#proposalCopy").textContent = "100 日小驚喜。波波想把每天的花、每一次想妳、每一個被我記住的小細節，都慢慢變成疼妳的日常。";
+        proposalArt.src = proposalArt.dataset.proposalSrc;
+        proposalArt.alt = "軟萌 3D Q 版的波波單膝下跪，拿著戒指盒向涵涵求婚";
+        new Image().src = proposalArt.dataset.acceptedSrc;
         disagreeButton.classList.remove("is-hidden");
         disagreeButton.style.transform = "rotate(0deg)";
         disagreeButton.textContent = "不同意";
@@ -2082,6 +2089,8 @@
         proposalAccepted = true;
         proposalModal.classList.add("is-accepted");
         disagreeButton.classList.add("is-hidden");
+        proposalArt.src = proposalArt.dataset.acceptedSrc;
+        proposalArt.alt = "涵涵與波波的軟萌 3D Q 版禮服照";
         $("#proposalTitle").innerHTML = '<span class="title-line">太開心了</span><span class="title-line">妳終於同意了</span>';
         $("#proposalCopy").innerHTML = '<span class="copy-line">我一定用一輩子來愛妳、保護妳，</span><span class="copy-line">好好疼妳的。</span>';
         attemptCopy.textContent = "波波開心到想把全世界的花都送給妳。";
